@@ -11,9 +11,11 @@ class DateSelect extends /*Nette\Forms\*/FormControl
 
 	static $defaultFormat = '%year%/%month%/%day%/%hour/%minute%';
 	static $formatSeparator = '/';
+	static $emptyValue = '-';
 
 	protected $value;
 	protected $format;
+	protected $skipFirst;
 	protected $formats = array(
 		'year' => array(
 			'modifier' => 'Y',
@@ -70,6 +72,12 @@ class DateSelect extends /*Nette\Forms\*/FormControl
 			$format = self::$defaultFormat;
 		}
 		$this->format = $format;
+	}
+
+	public function skipFirst()
+	{
+		$this->skipFirst = true;
+		return $this;
 	}
 
 	public function getValue()
@@ -162,6 +170,10 @@ class DateSelect extends /*Nette\Forms\*/FormControl
 			$current = $from;
 
 			$options = array();
+		
+			if($this->skipFirst) {
+				$options[''] = self::$emptyValue;
+			}
 
 			$cycles = 0;
 			do {
@@ -173,6 +185,13 @@ class DateSelect extends /*Nette\Forms\*/FormControl
 					die('oops');
 				}
 			} while($to >= $current);
+
+			if($this->skipFirst) {
+				for($i = 1; $i < strlen(end($options));++$i) {
+					$options[''] .= self::$emptyValue;
+				}
+			}
+
 			foreach($options as $option) {
 				$opt = $control->create('option')
 					->setValue($option)
