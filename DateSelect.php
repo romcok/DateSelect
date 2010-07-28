@@ -98,6 +98,7 @@ class DateSelect extends /*Nette\Forms\*/FormControl
 		$separator = '';
 		foreach($this->formats as $format => $options) {
 			if(isset($values[$format])) {
+				if(empty($values[$format]) || !is_numeric($values[$format])) continue;
 				$value .= $separator . ($values[$format] < 10 ? '0' . $values[$format] : $values[$format]);
 				$separator = $options['separator'];
 			}
